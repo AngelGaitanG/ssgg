@@ -16,6 +16,7 @@ import { SeedModule } from './modules/seed/seed.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BusinessesModule } from './modules/businesses/businesses.module';
 import { AccessModule } from './modules/access/access.module';
+import { MenuModule } from './modules/menu/menu.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { AccessModule } from './modules/access/access.module';
     AuthModule,
     SeedModule,
     AccessModule,
-    BusinessesModule
+    BusinessesModule,
+    MenuModule
   ],
 })
 export class AppModule {}
