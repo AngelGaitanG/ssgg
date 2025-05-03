@@ -36,7 +36,7 @@ export class UserAccess {
   @Prop({ required: true })
   createdAt: Date;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   updatedAt: Date;
 }
 

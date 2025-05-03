@@ -24,7 +24,6 @@ export class AccessMongodbService implements IAccessDao {
     }   
 
     async update(id: string, access: UserAccess): Promise<UserAccessDocument> {
-        console.log(access, 'userAccess para ver si se actualiza');
         return this.accessModel.findByIdAndUpdate(id, access, { new: true });
     }
 

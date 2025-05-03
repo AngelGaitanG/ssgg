@@ -5,7 +5,7 @@
  * y métodos estáticos para los casos de uso más comunes.
  */
 
-import { HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { HTTP_RESPONSE } from './http-response';
 
 export class ApiResponse {
@@ -39,16 +39,25 @@ export class ApiResponse {
    * @param data Datos opcionales
    */
   static warning(message: string, data: any = null): ApiResponse {
-    return new ApiResponse(HTTP_RESPONSE.WARNING, message, HttpStatus.BAD_REQUEST, data);
+    throw new ApiResponse(HTTP_RESPONSE.WARNING, message, HttpStatus.BAD_REQUEST, data);
   }
 
   /**
-   * Crea una respuesta de error
-   * @param message Mensaje de error
-   * @param data Datos opcionales
+   * Crea una respuesta de error que se integra con las excepciones de NestJS
+   * @param error El error original de NestJS
    */
-  static error(message: string, data: any = null): ApiResponse {
-    return new ApiResponse(HTTP_RESPONSE.ERROR, message, HttpStatus.INTERNAL_SERVER_ERROR, data);
+  static error(error: any): never {
+    if (error instanceof HttpException) {
+      throw error;
+    }
+    
+    const statusCode = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+    const message = error.message || 'Error interno del servidor';
+    
+    throw new HttpException(
+      new ApiResponse(HTTP_RESPONSE.ERROR, message, statusCode),
+      statusCode
+    );
   }
 
   /**

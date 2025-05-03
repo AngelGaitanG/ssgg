@@ -23,8 +23,9 @@ export class BrandService {
             
             // Buscamos un userAccess sin brand asignado
             const availableUserAccess = userAccesses.find(access => !access.brand);
+            const domain = brand.subdomain + '.agiliza360.com';
             
-            const createdBrand = await this._brandDb.create(brand);
+            const createdBrand = await this._brandDb.create({...brand, domainUrl: domain});
             
             if (availableUserAccess) {
                
@@ -47,14 +48,14 @@ export class BrandService {
     }
 
     async getAllBrands(user: IUserWithRole) {
-        console.log(user, 'user');
+        
         if ( user.role === RoleType.SUPERADMIN) {
             return this._brandDb.findAll();
           }
       
         //   Para otros roles, obtener solo las marcas a las que tiene acceso
           const accesses = await this.accessService.findByUserId(user.id);
-          console.log(accesses, 'accesses');
+          
           const brands = accesses
             .filter(access => access.brand)
             .map(access => access.brand);

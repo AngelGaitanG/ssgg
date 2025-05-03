@@ -23,11 +23,9 @@ export class RequestLoggerMiddleware implements NestMiddleware {
 
     // 3. Log the incoming request
     console.log(`
-    🟢🟢 INCOMING REQUEST
-    ⏰ Time: ${new Date().toISOString()}
-    🔍 Method: ${req.method}
-    🌐 URL: ${req.originalUrl}
-    📍 IP: ${clientIp}
+    🟢🟢 INCOMING REQUEST 🔍 Method: ${req.method} 🌐 URL: ${req.originalUrl} ⏰ Time: ${new Date().toISOString().split('T')[0]}
+
+    🔵🔵 BODY: ${JSON.stringify(req.body)}
     `);
 
     // 4. Capture the response finish event
@@ -37,13 +35,7 @@ export class RequestLoggerMiddleware implements NestMiddleware {
 
       // 6. Log the response
       console.log(`
-      🔴🔴 RESPONSE
-      ⏰ Time: ${new Date().toISOString()}
-      🔍 Method: ${req.method}
-      🌐 URL: ${req.originalUrl}
-      📍 IP: ${clientIp}
-      ⚡ Duration: ${duration}ms
-      📊 Status: ${res.statusCode}
+      🔴🔴 RESPONSE 🔍 Method: ${req.method} 🌐 URL: ${req.originalUrl} ⏰ Time: ${new Date().toISOString().split('T')[0]} 📊 Status: ${res.statusCode}
       `);
     });
 

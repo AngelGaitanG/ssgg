@@ -15,7 +15,7 @@ export class AuthController {
             const user = await this.authService.signUp(signUpDto);
             return ApiResponse.success('User created successfully', user);
         } catch (error) {
-            return ApiResponse.error(error.message);
+            return ApiResponse.error(error);
         }
     }
 
@@ -26,7 +26,7 @@ export class AuthController {
             const user = await this.authService.signIn(signInDto);
             return ApiResponse.success('User signed in successfully', user);
         } catch (error) {
-            return ApiResponse.error(error.message);
+            return ApiResponse.error(error);
         }
     }
 }

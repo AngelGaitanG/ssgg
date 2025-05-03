@@ -41,15 +41,15 @@ export class AccessService {
         return this._accessDb.createUserAccess(userAccess);
     }
 
-    async createUserAccessWithBrand(userId: string, roleId: string, brandId: string): Promise<UserAccessDocument> {
+    async createUserAccessWithBrand(userId: string, roleName: string, brandId: string): Promise<UserAccessDocument> {
         const user = await this.userService.findById(userId);
-        const role = await this.roleService.findOne(roleId);
+        const role = await this.roleService.findByName(roleName);
         const brand = await this.brandService.findById(brandId);
         const userAccess = new UserAccess();
         userAccess.user = user;
         userAccess.role = role;
         userAccess.userId = userId;
-        userAccess.roleId = roleId;
+        userAccess.roleId = role.id;
         userAccess.brand = brand;
         userAccess.createdAt = new Date();
         return this._accessDb.createUserAccess(userAccess);

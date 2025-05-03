@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { RoleService } from "./role/role.service";
 import { UserService } from "./user/user.service";
 import * as bcrypt from 'bcrypt';
@@ -81,7 +81,7 @@ export class AuthService {
         const role = await this.roleService.findOne(roleType);
 
         if (!role) {
-          throw new BadRequestException('Role not found');
+          throw new NotFoundException('Role not found');
         }
 
         // Limpiamos la respuesta

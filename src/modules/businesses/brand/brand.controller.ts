@@ -15,10 +15,11 @@ export class BrandController {
     @UseGuards(JwtAuthGuard)
     async createBrand(@Req() req: RequestWithUser, @Body() brand: CreateBrandDto): Promise<ApiResponse> {
         try {
+            console.log(req.user, 'HOLA')
             const createdBrand = await this.brandService.createBrand(req.user, brand);
             return ApiResponse.success('Marca creada correctamente', createdBrand);
         } catch (error) {
-            return ApiResponse.error('Error al crear la marca', error);
+            return ApiResponse.error(error);
         }
     }
 

@@ -41,8 +41,7 @@ export class CreateBrandDto {
 
     @ApiProperty({ description: 'Subdominio de la marca', required: false })
     @IsString()
-    @IsOptional()
-    subdomain?: string;
+    subdomain: string;
 
     @ApiProperty({ description: 'URL del dominio', required: false })
     @IsString()

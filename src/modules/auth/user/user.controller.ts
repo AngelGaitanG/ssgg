@@ -14,7 +14,7 @@ export class UserController {
             const user = await this.userService.createUser(createUserDto);
             return ApiResponse.success('User created', user);
         } catch (error) {
-            return ApiResponse.error('User not created', error);
+            return ApiResponse.error(error);
         }
     }
 
@@ -24,7 +24,7 @@ export class UserController {
             const user = await this.userService.findByEmail(email);
             return ApiResponse.success('User found', user);
         } catch (error) {
-            return ApiResponse.error('User not found', error);
+            return ApiResponse.error(error);
         }
     }
 }
