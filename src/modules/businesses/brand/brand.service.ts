@@ -1,4 +1,4 @@
-import { ForbiddenException, forwardRef, Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, forwardRef, Inject, Injectable } from "@nestjs/common";
 import { RoleType } from "src/modules/auth/role/entity/role.entity";
 import { IBrandDao } from "./db/brand.dao";
 import { BrandMongodbService } from "./db/brand-mongodb.service";
@@ -17,29 +17,46 @@ export class BrandService {
         this._brandDb = brandMongodbService;
     }
 
+    /**
+     * Crea una nueva marca y asigna los accesos correspondientes al usuario
+     * Este método implementa el siguiente flujo:
+     * 1. Verifica que el usuario tenga rol de SUPERADMIN u OWNER
+     * 2. Valida que no exista otra marca con el mismo subdominio
+     * 3. Busca accesos disponibles del usuario
+     * 4. Crea la marca con el dominio completo
+     * 5. Si hay un acceso disponible, lo actualiza con la nueva marca
+     * 6. Si no hay acceso disponible, crea uno nuevo
+     */
     async createBrand(user: IUserWithRole, brand: CreateBrandDto) {
+        // 1. Verificar permisos del usuario
         if (user.role === RoleType.SUPERADMIN || user.role === RoleType.OWNER) {
+            // 2. Validar subdominio único
+            const existingBrand = await this._brandDb.findBySubdomain(brand.subdomain);
+            if (existingBrand) {
+                throw new BadRequestException('Ya existe una marca con este subdominio');
+            }
+
+            // 3. Buscar accesos del usuario
             const userAccesses = await this.accessService.findByUserId(user.id);
             
-            // Buscamos un userAccess sin brand asignado
+            // 4. Buscar acceso disponible
             const availableUserAccess = userAccesses.find(access => !access.brand);
             const domain = brand.subdomain + '.agiliza360.com';
             
+            // 5. Crear la marca
             const createdBrand = await this._brandDb.create({...brand, domainUrl: domain});
             
+            // 6. Asignar acceso a la marca
             if (availableUserAccess) {
-               
-                // Si encontramos un userAccess disponible, lo actualizamos
+                // Actualizar acceso existente
                 await this.accessService.update(availableUserAccess._id.toString(), {
                     ...availableUserAccess,
                     brandId: createdBrand._id.toString(),
                     brand: createdBrand
                 });
             } else {
-
-                // Si no hay userAccess disponible, creamos uno nuevo
+                // Crear nuevo acceso
                 await this.accessService.createUserAccessWithBrand(user.id, user.role, createdBrand._id.toString());
-
             }
             
             return createdBrand;

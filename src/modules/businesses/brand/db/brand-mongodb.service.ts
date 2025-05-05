@@ -4,6 +4,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Brand, BrandDocument } from "../entity/brand.entity";
 import { CreateBrandDto } from "../dto/create-brand.dto";
+
 @Injectable()
 export class BrandMongodbService implements IBrandDao {
     constructor(
@@ -22,6 +23,10 @@ export class BrandMongodbService implements IBrandDao {
 
     async findById(id: string): Promise<BrandDocument> {
         return this.brandModel.findById(id);
+    }
+
+    async findBySubdomain(subdomain: string): Promise<BrandDocument> {
+        return this.brandModel.findOne({ subdomain }).exec();
     }
 
     async update(id: string, brand: BrandDocument): Promise<BrandDocument> {

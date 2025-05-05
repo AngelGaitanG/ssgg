@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Document, Types } from "mongoose";
 import { Branch } from "../../branch/entity/branch.entity";
-import { LANGUAGES, TIMEZONES } from "../../../../core/constants";
+import { LANGUAGES, TIMEZONES, BUSINESS_CATEGORIES } from "../../../../core/constants";
 
 @Schema({ timestamps: true })
 export class Brand {
@@ -21,8 +21,8 @@ export class Brand {
   @Prop({ nullable: true })
   domainUrl: string;
 
-  @Prop({ nullable: true })
-  businessCategory: string;
+  @Prop({ nullable: true, enum: BUSINESS_CATEGORIES })
+  businessCategory: BUSINESS_CATEGORIES;
 
   @Prop({ default: LANGUAGES.SPANISH, enum: LANGUAGES })
   language: LANGUAGES;
