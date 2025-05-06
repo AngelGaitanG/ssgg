@@ -1,21 +1,37 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { IProductDao } from "./product.dao";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Product } from "../entity/product.entity";
-
+import { Brand } from "../../../businesses/brand/entity/brand.entity";
+import { CreateProductDto } from "../dto/create-product.dto";
+import { Category } from "../../category/entity/category.entity";
 @Injectable()
 export class ProductMongodbService implements IProductDao {
     constructor(
-        @InjectModel(Product.name) private productModel: Model<Product>
+        @InjectModel(Product.name) private productModel: Model<Product>,
+        @InjectModel(Brand.name) private brandModel: Model<Brand>,
+        @InjectModel(Category.name) private categoryModel: Model<Category>
     ) {}
 
-    async create(product: Product): Promise<Product> {
-        return this.productModel.create(product);
+    async create(product: CreateProductDto): Promise<Product> {
+        const brand = await this.brandModel.findById(product.brandId);
+        const category = await this.categoryModel.findById(product.categoryId);
+        if (!brand) {
+            throw new NotFoundException("Marca no encontrada");
+        }
+        if (!category) {    
+            throw new NotFoundException("Categoria no encontrada");
+        }
+        return this.productModel.create({ ...product, brand, category });
     }
 
     async findAll(): Promise<Product[]> {
         return this.productModel.find();
+    }
+
+    async findAllByBrand(brandId: string): Promise<Product[]> {
+        return this.productModel.find({ brandId });
     }
 
     async findById(id: string): Promise<Product> {

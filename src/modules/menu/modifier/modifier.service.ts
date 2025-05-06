@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { IModifierDao } from "./db/modifier.dao";
 import { ModifierMongodbService } from "./db/modifier-mongodb.service";
 import { Modifier } from "./entity/modifier.entity";    
+import { CreateModifierDto } from "./dto/create-modifier.dto";
 
 @Injectable()
 export class ModifierService {
@@ -12,7 +13,7 @@ export class ModifierService {
         this._modifierDb = modifierMongodbService;
     }
 
-    async create(modifier: Modifier): Promise<Modifier> {
+    async create(modifier: CreateModifierDto): Promise<Modifier> {
         return this._modifierDb.create(modifier);
     }
 
@@ -20,6 +21,12 @@ export class ModifierService {
         return this._modifierDb.findAll();
     }
     
+    async findAllByBrand(brandId: string): Promise<Modifier[]> {
+        return this._modifierDb.findAllByBrand(brandId);
+    }
     
+    async delete(id: string): Promise<Modifier> {
+        return this._modifierDb.delete(id);
+    }
 }
 

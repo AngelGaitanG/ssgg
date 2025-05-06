@@ -48,7 +48,7 @@ export class AuthService {
       }
 
     async signUp(registerDto: SignUpDto) {
-        const { email, password, fullName, roleType } = registerDto;
+        const { email, password, fullName, roleType = RoleType.OWNER } = registerDto;
 
         const existingUser = await this.userService.findByEmail(email);
         if (existingUser) {
@@ -78,7 +78,7 @@ export class AuthService {
 
         await this.accessService.createUserAccess(user._id.toString(), roleType);
 
-        const role = await this.roleService.findOne(roleType);
+        const role = await this.roleService.findByName(roleType);
 
         if (!role) {
           throw new NotFoundException('Role not found');

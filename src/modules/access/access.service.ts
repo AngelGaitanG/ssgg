@@ -28,12 +28,12 @@ export class AccessService {
 
     async createUserAccess(userId: string, roleId: string): Promise<UserAccessDocument> {
         const user = await this.userService.findById(userId);
-        const role = await this.roleService.findOne(roleId);
+        const role = await this.roleService.findByName(roleId);
         const userAccess = new UserAccess();
         userAccess.user = user;
         userAccess.role = role;
         userAccess.userId = userId;
-        userAccess.roleId = roleId;
+        userAccess.roleId = role.id;
         userAccess.createdAt = new Date();
         userAccess.updatedAt = new Date();
 
