@@ -6,6 +6,7 @@ import { Product } from "../entity/product.entity";
 import { Brand } from "../../../businesses/brand/entity/brand.entity";
 import { CreateProductDto } from "../dto/create-product.dto";
 import { Category } from "../../category/entity/category.entity";
+
 @Injectable()
 export class ProductMongodbService implements IProductDao {
     constructor(

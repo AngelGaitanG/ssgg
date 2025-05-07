@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, forwardRef, Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { RoleType } from "src/modules/auth/role/entity/role.entity";
 import { IBrandDao } from "./db/brand.dao";
 import { BrandMongodbService } from "./db/brand-mongodb.service";
@@ -6,6 +6,7 @@ import { AccessService } from "src/modules/access/access.service";
 import { IUserWithRole } from "src/core/interfaces/request-with-user";
 import { CreateBrandDto } from "./dto/create-brand.dto";
 import { BrandDocument } from "./entity/brand.entity";
+import { UpdateBrandSettingsDto } from "./dto/update-brand-settings.dto";
 
 @Injectable()
 export class BrandService {
@@ -82,6 +83,57 @@ export class BrandService {
 
     async findById(id: string): Promise<BrandDocument> {
         return this._brandDb.findById(id);
+    }
+
+    async getBrandById(id: string): Promise<BrandDocument> {
+        const brand = await this._brandDb.findById(id);
+        if (!brand) {
+            throw new NotFoundException('Marca no encontrada');
+        }
+        return brand;
+    }
+
+    async updateBrandSettings(
+        id: string,
+        settings: UpdateBrandSettingsDto,
+        user: IUserWithRole
+    ): Promise<BrandDocument> {
+        // Verificar que la marca existe
+        const brand = await this.getBrandById(id);
+        if(!brand) {
+            throw new NotFoundException('Marca no encontrada')
+        }
+
+        // Verificar permisos
+        if (user.role !== RoleType.SUPERADMIN) {
+            const hasAccess = await this.accessService.userHasAccessToBrand(user.id, id);
+            if (!hasAccess) {
+                throw new ForbiddenException('No tienes permisos para actualizar esta marca');
+            }
+        }
+
+        // Actualizar la marca
+        return this._brandDb.update(id, settings);
+    }
+
+    async updateBrandLogo(
+        id: string,
+        logoUrl: string | null,
+        user: IUserWithRole
+    ): Promise<BrandDocument> {
+        // Verificar que la marca existe
+        const brand = await this.getBrandById(id);
+
+        // Verificar permisos
+        if (user.role !== RoleType.SUPERADMIN) {
+            const hasAccess = await this.accessService.userHasAccessToBrand(user.id, id);
+            if (!hasAccess) {
+                throw new ForbiddenException('No tienes permisos para actualizar esta marca');
+            }
+        }
+
+        // Actualizar el logo
+        return this._brandDb.update(id, { logo: logoUrl });
     }
 }
 

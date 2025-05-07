@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Brand, BrandSchema } from "./entity/brand.entity";
 import { BrandController } from "./brand.controller";
@@ -14,6 +14,8 @@ import { RoleService } from "../../auth/role/role.service";
 import { User, UserSchema } from "../../auth/user/entity/user.entity";
 import { RoleMongodbService } from "../../auth/role/db/role-mongodb.service";
 import { Role, RoleSchema } from "../../auth/role/entity/role.entity";
+import { FileUploadService } from '../../../core/cloudinary/image.service';
+import { MulterModule } from '@nestjs/platform-express';
 @Module({
     imports: [
         MongooseModule.forFeature([
@@ -22,13 +24,20 @@ import { Role, RoleSchema } from "../../auth/role/entity/role.entity";
             { name: User.name, schema: UserSchema },
             { name: Role.name, schema: RoleSchema }
         ]),
+        MulterModule.register({
+            limits: {
+                fileSize: 5 * 1024 * 1024, // 5MB
+            },
+        }),
+        forwardRef(() => AccessModule)
     ],
     controllers: [BrandController],
     providers: [
         BrandService, BrandMongodbService, 
         AccessService, AccessMongodbService, 
         UserService, UserMongodbService, 
-        RoleService, RoleMongodbService
+        RoleService, RoleMongodbService,
+        FileUploadService
     ],
     exports: [BrandService],
 })

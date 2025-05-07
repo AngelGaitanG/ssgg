@@ -7,6 +7,7 @@ export interface IAccessDao {
     update(id: string, access: UserAccess): Promise<UserAccessDocument>;
     delete(id: string): Promise<void>;
     findByUserAndBusiness(userId: string, brandId?: string, branchId?: string): Promise<UserAccessDocument>;
+    userHasAccessToBrand(userId: string, brandId: string): Promise<Boolean>;
     userAccess(userId: string): Promise<UserAccessDocument>;
     createUserAccess(userAccess: UserAccess): Promise<UserAccessDocument>;
     findByUserId(userId: string): Promise<UserAccessDocument[]>;

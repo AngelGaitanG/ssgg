@@ -26,6 +26,10 @@ export class AccessService {
         return this._accessDb.userAccess(userId);
     }
 
+    async userHasAccessToBrand(userId: string, brandId: string): Promise<Boolean> {
+        return this._accessDb.userHasAccessToBrand(userId, brandId)
+    }
+
     async createUserAccess(userId: string, roleId: string): Promise<UserAccessDocument> {
         const user = await this.userService.findById(userId);
         const role = await this.roleService.findByName(roleId);

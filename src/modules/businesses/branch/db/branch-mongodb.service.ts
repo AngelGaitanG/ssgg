@@ -23,6 +23,9 @@ export class BranchMongodbService implements IBranchDao {
         return this.branchModel.findById(id);
     }
 
+    async findByBrand(brandId: string): Promise<Branch[]> {
+        return this.branchModel.find({ brandId })
+    }
     async update(id: string, branch: Branch): Promise<Branch> {
         return this.branchModel.findByIdAndUpdate(id, branch, { new: true });
     }

@@ -39,6 +39,11 @@ export class AccessMongodbService implements IAccessDao {
         return this.accessModel.findOne({ userId }).populate('role').exec();
     }
 
+    async userHasAccessToBrand(userId: string, brandId: string): Promise<Boolean> {
+      const hasAccess = this.accessModel.findOne({ userId, brandId});
+      return hasAccess ? true : false;
+    }
+
     async createUserAccess(userAccess: UserAccess): Promise<UserAccessDocument> {
         return this.create(userAccess);
     }

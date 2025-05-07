@@ -20,5 +20,9 @@ export class BranchService {
     async findAllBranches(): Promise<Branch[]> {
         return this._branchDB.findAll();
     }
+
+    async findByBrand(brandId: string):Promise<Branch[]> {
+        return this._branchDB.findByBrand(brandId);
+    }
     
 }

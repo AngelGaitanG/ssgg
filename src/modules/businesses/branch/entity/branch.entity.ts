@@ -4,8 +4,6 @@ import mongoose from "mongoose";
 
 @Schema({ timestamps: true })
 export class Branch {
-  @Prop({ required: true })
-  id: string;
 
   @Prop({ nullable: true})
   externalId: string;
@@ -19,7 +17,7 @@ export class Branch {
   @Prop({ required: true })
   phone: string;
 
-  @Prop({ required: true })
+  @Prop()
   email: string;
 
   @Prop({ default: true })
