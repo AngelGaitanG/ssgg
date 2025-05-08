@@ -34,11 +34,15 @@ export class CategoryMondodbService implements ICategoryDao {
     }
 
     async update(id: string, category: Category): Promise<Category> {
-        return this.categoryModel.findByIdAndUpdate(id, category, { new: true });
+        return this.categoryModel.findByIdAndUpdate(
+            id,
+            { $set: category },
+            { new: true }
+        ).exec();
     }
 
     async delete(id: string): Promise<void> {
-        await this.categoryModel.findByIdAndDelete(id);
+        await this.categoryModel.findByIdAndDelete(id).exec();
     }
 
 }

@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { OptionService } from "./option.service";
 import { CreateOptionDto } from "./dto/create-option.dto";
 import { ApiResponse } from "../../../core/responses/api-response";
 import { JwtAuthGuard } from "../../../core/guards/jwt-auth.guard";
 import { Roles } from "../../../core/decorators/roles.decorator";
 import { RoleType } from "../../../modules/auth/role/entity/role.entity";
+import { UpdateOptionDto } from "./dto/update-option.dto";
 
 @Controller("option")
 export class OptionController {
@@ -30,6 +31,18 @@ export class OptionController {
             console.log(brandId, 'Brand')
             const options = await this.optionService.findAllByBrand(brandId)
             return ApiResponse.success('Opciones encontradas exitosamente', options);
+        } catch (error) {
+            return ApiResponse.error(error);
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Roles(RoleType.OWNER, RoleType.SUPERADMIN)
+    @Patch(":id")
+    async update(@Param("id") id: string, @Body() updateOptionDto: UpdateOptionDto):Promise<ApiResponse> {
+        try {
+           const option = await this.optionService.update(id, updateOptionDto)
+           return ApiResponse.success('Opcion actualizada correctamente', option)
         } catch (error) {
             return ApiResponse.error(error);
         }

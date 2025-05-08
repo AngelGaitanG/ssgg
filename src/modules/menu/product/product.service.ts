@@ -1,8 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { IProductDao } from "./db/product.dao";
 import { ProductMongodbService } from "./db/product-mongodb.service";
 import { Product } from "./entity/product.entity";
 import { CreateProductDto } from "./dto/create-product.dto";
+import { UpdateProductDto } from './dto/update-product.dto';
 
 
 @Injectable()
@@ -27,15 +28,22 @@ export class ProductService {
     }
 
     async findById(id: string): Promise<Product> {
-        return this._productDb.findById(id);
+        const product = await this._productDb.findById(id);
+        if (!product) {
+            throw new NotFoundException('Producto no encontrado');
+        }
+        return product;
     }
 
-    async update(id: string, product: Product): Promise<Product> {
+    async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
+        const product = await this.findById(id);
+        Object.assign(product, updateProductDto);
         return this._productDb.update(id, product);
     }
     
     async delete(id: string): Promise<void> {
-        return this._productDb.delete(id);
+        await this.findById(id);
+        await this._productDb.delete(id);
     }
 }
 

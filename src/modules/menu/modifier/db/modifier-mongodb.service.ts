@@ -26,6 +26,14 @@ export class ModifierMongodbService implements IModifierDao {
         return this.modifierModel.create({ ...modifier, brand, options });
     }
 
+    async findById(id: string): Promise<Modifier> {
+        return this.modifierModel.findById(id);
+    }
+
+    async update(id: string, modifier: Modifier): Promise<Modifier> {
+        return this.modifierModel.findByIdAndUpdate(id, modifier)
+    }
+
     async findAll(): Promise<Modifier[]> {
         return this.modifierModel.find();
     }
@@ -34,7 +42,7 @@ export class ModifierMongodbService implements IModifierDao {
         return this.modifierModel.find({ brandId });
     }
 
-    async delete(id: string): Promise<Modifier> {
+    async delete(id: string): Promise<void> {
         return this.modifierModel.findByIdAndDelete(id);
     }
 }

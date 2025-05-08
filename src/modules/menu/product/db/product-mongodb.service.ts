@@ -24,26 +24,31 @@ export class ProductMongodbService implements IProductDao {
         if (!category) {    
             throw new NotFoundException("Categoria no encontrada");
         }
-        return this.productModel.create({ ...product, brand, category });
+        const createdProduct = new this.productModel({ ...product, brand, category });
+        return await createdProduct.save();
     }
 
     async findAll(): Promise<Product[]> {
-        return this.productModel.find();
+        return await this.productModel.find().exec();
     }
 
     async findAllByBrand(brandId: string): Promise<Product[]> {
-        return this.productModel.find({ brandId });
+        return await this.productModel.find({ brandId }).exec();
     }
 
     async findById(id: string): Promise<Product> {
-        return this.productModel.findById(id);
+        return await this.productModel.findById(id).exec();
     }
 
     async update(id: string, product: Product): Promise<Product> {
-        return this.productModel.findByIdAndUpdate(id, product, { new: true });
+        return await this.productModel.findByIdAndUpdate(
+            id,
+            { $set: product },
+            { new: true }
+        ).exec();
     }
 
     async delete(id: string): Promise<void> {
-        await this.productModel.findByIdAndDelete(id);
+        await this.productModel.findByIdAndDelete(id).exec();
     }
 }

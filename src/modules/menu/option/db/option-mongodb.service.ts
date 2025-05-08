@@ -24,19 +24,32 @@ export class OptionMongodbService implements IOptionDao {
         // if (!modifier) {    
         //     throw new NotFoundException("Modificador no encontrado");
         // }
-        return this.optionModel.create({ ...option, brand});
+        const createdOption = new this.optionModel(option);
+        return await createdOption.save();
     }
 
     async findAll(): Promise<Option[]> {
-        return this.optionModel.find();
+        return await this.optionModel.find().exec();
+    }
+
+    async findById(id: string): Promise<Option> {
+        return await this.optionModel.findById(id).exec();
     }
 
     async findAllByBrand(brandId: string): Promise<Option[]> {
-        return this.optionModel.find({ brandId });
+        return await this.optionModel.find({ brandId }).exec();
     }
 
-    async removeOption(id: string): Promise<void> {
-        return this.optionModel.findByIdAndDelete(id)
+    async update(id: string, option: Option): Promise<Option> {
+        return await this.optionModel.findByIdAndUpdate(
+            id,
+            { $set: option },
+            { new: true }
+        ).exec();
+    }
+
+    async delete(id: string): Promise<void> {
+        await this.optionModel.findByIdAndDelete(id).exec();
     }
 }
 

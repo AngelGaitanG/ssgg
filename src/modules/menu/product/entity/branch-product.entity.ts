@@ -35,6 +35,9 @@ export class BranchProduct {
   
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Branch" })
     branch: Branch;
+
+    @Prop()
+    branchId: string;
   
     @Prop()
     createdAt: Date;

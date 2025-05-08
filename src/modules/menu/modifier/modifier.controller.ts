@@ -1,10 +1,11 @@
-import { Controller, Post, Body, UseGuards, Get, Param, Delete } from "@nestjs/common";
+import { Controller, Post, Body, UseGuards, Get, Param, Delete, Patch } from "@nestjs/common";
 import { ModifierService } from "./modifier.service";
 import { CreateModifierDto } from "./dto/create-modifier.dto";
 import { ApiResponse } from "../../../core/responses/api-response";
 import { JwtAuthGuard } from "../../../core/guards/jwt-auth.guard";
 import { Roles } from "../../../core/decorators/roles.decorator";
 import { RoleType } from "../../../modules/auth/role/entity/role.entity";
+import { UpdateModifierDto } from "./dto/update-modifier.dto";
 
 @Controller("modifier")
 export class ModifierController {
@@ -29,6 +30,18 @@ export class ModifierController {
         try {
             const modifiers = await this.modifierService.findAllByBrand(brandId);
             return ApiResponse.success("Modificadores encontrados correctamente", modifiers);
+        } catch (error) {
+            return ApiResponse.error(error);
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Roles(RoleType.OWNER, RoleType.SUPERADMIN)
+    @Patch(":id")
+    async update(@Param("id") id: string, @Body() updateModifierDto: UpdateModifierDto):Promise<ApiResponse> {
+        try {
+           const modifier = await this.modifierService.update(id, updateModifierDto)
+           return ApiResponse.success('Modificador actualizada correctamente', modifier)
         } catch (error) {
             return ApiResponse.error(error);
         }

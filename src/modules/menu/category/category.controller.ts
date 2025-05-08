@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { CategoryService } from "./category.service";
 import { CreateCategoryDto } from "./dto/create-category.dto";
 import { ApiResponse } from "../../../core/responses/api-response";
 import { JwtAuthGuard } from "../../../core/guards/jwt-auth.guard";
 import { Roles } from "../../../core/decorators/roles.decorator";
 import { RoleType } from "../../../modules/auth/role/entity/role.entity";
+import { UpdateCategoryDto } from "./dto/update-category.dto";
 
 @Controller("category")
 export class CategoryController {
@@ -41,6 +42,18 @@ export class CategoryController {
         try {
             const categories = await this.categoryService.findByBrandId(brandId);
             return ApiResponse.success("Categorias encontradas correctamente", categories);
+        } catch (error) {
+            return ApiResponse.error(error);
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Roles(RoleType.OWNER, RoleType.SUPERADMIN)
+    @Patch(":id")
+    async update(@Param("id") id: string, @Body() updateCategoryDto: UpdateCategoryDto):Promise<ApiResponse> {
+        try {
+           const category = await this.categoryService.update(id, updateCategoryDto)
+           return ApiResponse.success('Categoria actualizada correctamente', category)
         } catch (error) {
             return ApiResponse.error(error);
         }

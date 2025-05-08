@@ -1,10 +1,11 @@
-import { Controller, Post, UseGuards, Body, Get, Param, Delete } from "@nestjs/common";
+import { Controller, Post, UseGuards, Body, Get, Param, Delete, Patch } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { Roles } from "src/core/decorators/roles.decorator";
 import { RoleType } from "src/modules/auth/role/entity/role.entity";
 import { JwtAuthGuard } from "src/core/guards/jwt-auth.guard";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { ApiResponse } from "src/core/responses/api-response";
+import { UpdateProductDto } from "./dto/update-product.dto";
 
 @Controller("product")
 export class ProductController {
@@ -29,6 +30,18 @@ export class ProductController {
         try {
             const products = await this.productService.findAllByBrand(brandId);
             return ApiResponse.success("Productos encontrados correctamente", products);
+        } catch (error) {
+            return ApiResponse.error(error);
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Roles(RoleType.OWNER, RoleType.SUPERADMIN)
+    @Patch(":id")
+    async update(@Param("id") id: string, @Body() updateProductDto: UpdateProductDto):Promise<ApiResponse> {
+        try {
+           const product = await this.productService.update(id, updateProductDto)
+           return ApiResponse.success('Producto actualizado correctamente', product)
         } catch (error) {
             return ApiResponse.error(error);
         }
