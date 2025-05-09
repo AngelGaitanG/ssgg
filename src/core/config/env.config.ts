@@ -25,6 +25,10 @@ export interface EnvVars {
   DEEPSEEK_ENDPOINT?: string;
   DEEPSEEK_API_KEY?: string;
   DEEPSEEK_MODEL?: string;
+  MAIL_USER: string;
+  MAIL_PASSWORD: string;
+  MAIL_SMTP: string;
+  MAIL_HOST: number;
 }
 
 export const envSchema = Joi.object({
@@ -51,6 +55,10 @@ export const envSchema = Joi.object({
   DEEPSEEK_ENDPOINT: Joi.string().default('https://api.deepseek.com'),
   DEEPSEEK_API_KEY: Joi.string().default(''),
   DEEPSEEK_MODEL: Joi.string().default('deepseek-chat'),
+  MAIL_USER: Joi.string().required,
+  MAIL_PASSWORD: Joi.string().required,
+  MAIL_SMTP: Joi.string().required,
+  MAIL_HOST: Joi.number().required
 }).unknown(true);
 
 export const envConfig = () => {
@@ -94,5 +102,11 @@ export const envConfig = () => {
       apiKey: value.DEEPSEEK_API_KEY,
       model: value.DEEPSEEK_MODEL,
     },
+    mail: {
+      user: value.MAIL_USER,
+      password: value.MAIL_PASSWORD,
+      smtp: value.MAIL_SMTP,
+      host: value.MAIL_HOST
+    }
   };
 };

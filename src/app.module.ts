@@ -17,6 +17,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { BusinessesModule } from './modules/businesses/businesses.module';
 import { AccessModule } from './modules/access/access.module';
 import { MenuModule } from './modules/menu/menu.module';
+import { CoverageZoneModule } from './modules/zones/coverage-zone.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { MenuModule } from './modules/menu/menu.module';
     SeedModule,
     AccessModule,
     BusinessesModule,
-    MenuModule
+    MenuModule,
+    CoverageZoneModule
   ],
 })
 export class AppModule {}
