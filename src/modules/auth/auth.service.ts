@@ -7,6 +7,7 @@ import { RoleType } from "./role/entity/role.entity";
 import { SignUpDto } from "./dto/sign-up.dto";
 import { SignInDto } from "./dto/sign-in.dto";
 import { AccessService } from "../access/access.service";
+import { MailService } from "../mail/services/auth-verification.service";
 @Injectable()
 export class AuthService {
     constructor(
@@ -14,6 +15,7 @@ export class AuthService {
         private readonly roleService: RoleService,
         private readonly jwtService: JwtService,
         private readonly accessService: AccessService,
+        private readonly mailService: MailService
     ) {}
 
     async signIn(signInDto: SignInDto) {
@@ -83,6 +85,12 @@ export class AuthService {
         if (!role) {
           throw new NotFoundException('Role not found');
         }
+        const payload = {
+          sub: user._id,
+          email: user.email,
+        }
+        const token =  await this.jwtService.signAsync(payload, { expiresIn: '12h' });
+        await this.mailService.sendVerificationEmail(user.email, token)
 
         // Limpiamos la respuesta
         const cleanUser = {

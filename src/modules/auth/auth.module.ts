@@ -15,6 +15,7 @@ import { BrandMongodbService } from "../businesses/brand/db/brand-mongodb.servic
 import { Brand, BrandSchema } from "../businesses/brand/entity/brand.entity";
 import { User, UserSchema } from "../auth/user/entity/user.entity";
 import { Role, RoleSchema } from "../auth/role/entity/role.entity";
+import { MailModule } from "../mail/mail.module";
 @Module({
     imports: [
         UserModule,
@@ -29,6 +30,7 @@ import { Role, RoleSchema } from "../auth/role/entity/role.entity";
             { name: User.name, schema: UserSchema },
             { name: Role.name, schema: RoleSchema }
         ]),
+        MailModule
     ],
     controllers: [AuthController],
     providers: [
