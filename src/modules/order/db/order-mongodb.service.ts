@@ -33,6 +33,4 @@ export class OrderMongodbService implements IOrderDao {
     archivateOrder(id: string, status: Partial<Order>): Promise<Order> {
         return this.orderModel.findByIdAndUpdate(id, status)
     }
-
-
 }
